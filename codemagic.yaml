@@ -3,30 +3,54 @@ workflows:
     name: iOS App Store Build
     environment:
       groups:
-        - app_store
+        - app_store     # тут у тебя APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_PRIVATE_KEY
+      vars:
+        XCODE_PROJECT: "AlarmApp.xcodeproj"
+        XCODE_SCHEME: "AlarmApp"
+        BUNDLE_ID: "com.example.AlarmApp"     # ← твой реальный Bundle ID из Info.plist
+        DEV_TEAM: "CW6VS28729"                # ← твой Team ID (Apple Developer Team)
     scripts:
       - name: Build archive
         script: |
           xcodebuild \
-            -project AlarmApp.xcodeproj \
-            -scheme AlarmApp \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
             -sdk iphoneos \
             -configuration Release \
+            DEVELOPMENT_TEAM="$DEV_TEAM" \
+            PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
+            CODE_SIGN_STYLE=Automatic \
+            -allowProvisioningUpdates \
             archive \
             -archivePath $CM_BUILD_DIR/ios_app.xcarchive
+
       - name: Export .ipa
         script: |
+          cat > exportOptions.plist << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>uploadSymbols</key><true/>
+            <key>compileBitcode</key><false/>
+          </dict>
+          </plist>
+          EOF
           xcodebuild -exportArchive \
             -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
-            -exportOptionsPlist ExportOptions.plist \
+            -exportOptionsPlist exportOptions.plist \
             -exportPath $CM_BUILD_DIR
+
     artifacts:
       - $CM_BUILD_DIR/*.ipa
-      - $CM_BUILD_DIR/*.dSYM.zip
+      - $CM_BUILD_DIR/ios_app.xcarchive
+
     publishing:
       app_store_connect:
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        private_key: $APP_STORE_CONNECT_PRIVATE_KEY
         submit_to_testflight: true
         submit_to_app_store: false
