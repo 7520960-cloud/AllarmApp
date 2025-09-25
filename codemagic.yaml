@@ -1,0 +1,22 @@
+workflows:
+  ios-app:
+    name: iOS Build and Publish
+    environment:
+      xcode: latest
+      vars:
+        XCODE_SCHEME: "AlarmApp"
+        BUNDLE_ID: "com.sergej.alarmapp"
+    scripts:
+      - name: Install dependencies
+        script: |
+          echo "No dependencies, SwiftUI only"
+      - name: Build ipa for release
+        script: |
+          xcode-project build-ipa \
+            --project "AlarmApp.xcodeproj" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_KEY
