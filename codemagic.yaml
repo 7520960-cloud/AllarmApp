@@ -1,9 +1,47 @@
-scripts:
-  - name: Build for simulator
-    script: |
-      xcodebuild \
-        -project AlarmApp.xcodeproj \
-        -scheme AlarmApp \
-        -sdk iphonesimulator \
-        -destination 'platform=iOS Simulator,name=iPhone 14' \
-        build
+workflows:
+  ios-appstore:
+    name: iOS App Store Workflow
+    environment:
+      xcode: 16.4
+      ios_signing:
+        distribution_type: app-store
+      vars:
+        APP_STORE_CONNECT_KEY_IDENTIFIER: EnteYourKeyID   # заменишь своим
+        APP_STORE_CONNECT_ISSUER_ID: EnterYourIssuerID   # заменишь своим
+        APP_STORE_CONNECT_PRIVATE_KEY: EnteYourPrivateKey # добавишь в Codemagic как secure env
+    scripts:
+      - name: Clean
+        script: |
+          xcodebuild clean -project AlarmApp.xcodeproj -scheme AlarmApp
+      - name: Build for simulator (optional)
+        script: |
+          xcodebuild \
+            -project AlarmApp.xcodeproj \
+            -scheme AlarmApp \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 14' \
+            build
+      - name: Archive for App Store
+        script: |
+          xcodebuild \
+            -project AlarmApp.xcodeproj \
+            -scheme AlarmApp \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath $CM_BUILD_DIR/AlarmApp.xcarchive \
+            archive
+          xcodebuild \
+            -exportArchive \
+            -archivePath $CM_BUILD_DIR/AlarmApp.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath $CM_BUILD_DIR/ipa
+    artifacts:
+      - $CM_BUILD_DIR/AlarmApp.xcarchive
+      - $CM_BUILD_DIR/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        key_content: $APP_STORE_CONNECT_PRIVATE_KEY
+        submit_to_app_store: true
+        submit_to_testflight: true
