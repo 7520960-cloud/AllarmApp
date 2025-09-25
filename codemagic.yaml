@@ -1,21 +1,9 @@
-workflows:
-  ios-simulator-build:
-    name: iOS Simulator Build
-    environment:
-      xcode: latest
-      vars:
-        XCODE_SCHEME: "AlarmApp"
-    scripts:
-      - name: Install dependencies
-        script: |
-          echo "No dependencies, SwiftUI only"
-      - name: Build for iOS simulator
-        script: |
-          xcodebuild \
-            -project "AlarmApp.xcodeproj" \
-            -scheme "$XCODE_SCHEME" \
-            -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 15,OS=17.5' \
-            build
-    artifacts:
-      - build/ios/Debug-iphonesimulator/*.app
+scripts:
+  - name: Build for simulator
+    script: |
+      xcodebuild \
+        -project AlarmApp.xcodeproj \
+        -scheme AlarmApp \
+        -sdk iphonesimulator \
+        -destination 'platform=iOS Simulator,name=iPhone 14' \
+        build
