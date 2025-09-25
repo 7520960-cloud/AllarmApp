@@ -3,20 +3,13 @@ workflows:
     name: iOS App Store Build
     environment:
       groups:
-        - app_store            # группа переменных APP_STORE_CONNECT_...
-      vars:
-        XCODE_WORKSPACE: "AlarmApp.xcodeproj"
-        XCODE_SCHEME: "AlarmApp"
+        - app_store
     scripts:
-      - name: Install dependencies
-        script: |
-          brew install cocoapods || true
-          pod install --repo-update
-      - name: Build for iOS
+      - name: Build archive
         script: |
           xcodebuild \
-            -project "$XCODE_WORKSPACE" \
-            -scheme "$XCODE_SCHEME" \
+            -project AlarmApp.xcodeproj \
+            -scheme AlarmApp \
             -sdk iphoneos \
             -configuration Release \
             archive \
@@ -36,3 +29,4 @@ workflows:
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
+        submit_to_app_store: false
