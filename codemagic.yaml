@@ -2,42 +2,35 @@ workflows:
   ios-appstore:
     name: iOS App Store Workflow
     environment:
-      xcode: 16.4
-      ios_signing:
-        distribution_type: app-store
-      vars:
-        APP_STORE_CONNECT_KEY_IDENTIFIER: EnteYourKeyID   # заменишь своим
-        APP_STORE_CONNECT_ISSUER_ID: EnterYourIssuerID   # заменишь своим
-        APP_STORE_CONNECT_PRIVATE_KEY: EnteYourPrivateKey # добавишь в Codemagic как secure env
+      groups:
+        - app_store   # подключение группы с ключами
     scripts:
-      - name: Clean
+      - name: Install dependencies
         script: |
-          xcodebuild clean -project AlarmApp.xcodeproj -scheme AlarmApp
-      - name: Build for simulator (optional)
-        script: |
-          xcodebuild \
-            -project AlarmApp.xcodeproj \
-            -scheme AlarmApp \
-            -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 14' \
-            build
-      - name: Archive for App Store
+          gem install cocoapods --user-install
+          pod install --project-directory=AlarmApp || true
+
+      - name: Build iOS App
         script: |
           xcodebuild \
             -project AlarmApp.xcodeproj \
             -scheme AlarmApp \
             -sdk iphoneos \
             -configuration Release \
+            clean archive \
+            -archivePath $CM_BUILD_DIR/AlarmApp.xcarchive
+
+      - name: Export IPA
+        script: |
+          xcodebuild -exportArchive \
             -archivePath $CM_BUILD_DIR/AlarmApp.xcarchive \
-            archive
-          xcodebuild \
-            -exportArchive \
-            -archivePath $CM_BUILD_DIR/AlarmApp.xcarchive \
-            -exportOptionsPlist ExportOptions.plist \
-            -exportPath $CM_BUILD_DIR/ipa
+            -exportOptionsPlist AlarmApp/ExportOptions.plist \
+            -exportPath $CM_BUILD_DIR
+
     artifacts:
+      - $CM_BUILD_DIR/*.ipa
       - $CM_BUILD_DIR/AlarmApp.xcarchive
-      - $CM_BUILD_DIR/ipa/*.ipa
+
     publishing:
       app_store_connect:
         api_key: $APP_STORE_CONNECT_KEY_IDENTIFIER
