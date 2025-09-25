@@ -1,3 +1,135 @@
-// !Placeholder Xcode project file
-// В реальности Xcode сгенерирует pbxproj автоматически при создании проекта.
-// Здесь структура файлов собрана для CI/CD (Bitrise).
+// !$*UTF8*$!
+{
+  archiveVersion = 1;
+  classes = {};
+  objectVersion = 55;
+  objects = {
+
+/* Begin PBXBuildFile section */
+    1 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2 /* App.swift */; };
+    3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4 /* ContentView.swift */; };
+    5 /* AddAlarmView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6 /* AddAlarmView.swift */; };
+    7 /* Alarm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8 /* Alarm.swift */; };
+    9 /* AlarmViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10 /* AlarmViewModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+    2 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
+    4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+    6 /* AddAlarmView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAlarmView.swift; sourceTree = "<group>"; };
+    8 /* Alarm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alarm.swift; sourceTree = "<group>"; };
+    10 /* AlarmViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmViewModel.swift; sourceTree = "<group>"; };
+    11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+    12 = {
+      isa = PBXGroup;
+      children = (
+        2 /* App.swift */,
+        4 /* ContentView.swift */,
+        6 /* AddAlarmView.swift */,
+        8 /* Alarm.swift */,
+        10 /* AlarmViewModel.swift */,
+        11 /* Info.plist */,
+      );
+      path = AlarmApp;
+      sourceTree = "<group>";
+    };
+    13 = {
+      isa = PBXGroup;
+      children = (
+        12,
+      );
+      sourceTree = "<group>";
+    };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+    14 = {
+      isa = PBXNativeTarget;
+      buildConfigurationList = 15;
+      buildPhases = (
+        16 /* Sources */,
+      );
+      buildRules = ();
+      dependencies = ();
+      name = AlarmApp;
+      productName = AlarmApp;
+      productType = "com.apple.product-type.application";
+    };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+    17 = {
+      isa = PBXProject;
+      buildConfigurationList = 18;
+      compatibilityVersion = "Xcode 14.0";
+      developmentRegion = en;
+      hasScannedForEncodings = 0;
+      knownRegions = (en);
+      mainGroup = 13;
+      targets = (14);
+    };
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+    16 /* Sources */ = {
+      isa = PBXSourcesBuildPhase;
+      files = (
+        1 /* App.swift in Sources */,
+        3 /* ContentView.swift in Sources */,
+        5 /* AddAlarmView.swift in Sources */,
+        7 /* Alarm.swift in Sources */,
+        9 /* AlarmViewModel.swift in Sources */,
+      );
+    };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+    19 = {
+      isa = XCBuildConfiguration;
+      buildSettings = {
+        PRODUCT_NAME = "$(TARGET_NAME)";
+        INFOPLIST_FILE = AlarmApp/Info.plist;
+        IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+        SWIFT_VERSION = 5.0;
+      };
+      name = Debug;
+    };
+    20 = {
+      isa = XCBuildConfiguration;
+      buildSettings = {
+        PRODUCT_NAME = "$(TARGET_NAME)";
+        INFOPLIST_FILE = AlarmApp/Info.plist;
+        IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+        SWIFT_VERSION = 5.0;
+      };
+      name = Release;
+    };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+    15 = {
+      isa = XCConfigurationList;
+      buildConfigurations = (
+        19,
+        20,
+      );
+      defaultConfigurationIsVisible = 0;
+      defaultConfigurationName = Release;
+    };
+    18 = {
+      isa = XCConfigurationList;
+      buildConfigurations = (
+        19,
+        20,
+      );
+      defaultConfigurationIsVisible = 0;
+      defaultConfigurationName = Release;
+    };
+/* End XCConfigurationList section */
+
+  };
+  rootObject = 17;
+}
