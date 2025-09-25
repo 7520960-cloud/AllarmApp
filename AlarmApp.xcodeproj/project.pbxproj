@@ -1,0 +1,3 @@
+// !Placeholder Xcode project file
+// В реальности Xcode сгенерирует pbxproj автоматически при создании проекта.
+// Здесь структура файлов собрана для CI/CD (Bitrise).
