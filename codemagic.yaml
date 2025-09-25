@@ -1,40 +1,38 @@
 workflows:
   ios-appstore:
-    name: iOS App Store Workflow
+    name: iOS App Store Build
     environment:
       groups:
-        - app_store   # подключение группы с ключами
+        - app_store            # группа переменных APP_STORE_CONNECT_...
+      vars:
+        XCODE_WORKSPACE: "AlarmApp.xcodeproj"
+        XCODE_SCHEME: "AlarmApp"
     scripts:
       - name: Install dependencies
         script: |
-          gem install cocoapods --user-install
-          pod install --project-directory=AlarmApp || true
-
-      - name: Build iOS App
+          brew install cocoapods || true
+          pod install --repo-update
+      - name: Build for iOS
         script: |
           xcodebuild \
-            -project AlarmApp.xcodeproj \
-            -scheme AlarmApp \
+            -project "$XCODE_WORKSPACE" \
+            -scheme "$XCODE_SCHEME" \
             -sdk iphoneos \
             -configuration Release \
-            clean archive \
-            -archivePath $CM_BUILD_DIR/AlarmApp.xcarchive
-
-      - name: Export IPA
+            archive \
+            -archivePath $CM_BUILD_DIR/ios_app.xcarchive
+      - name: Export .ipa
         script: |
           xcodebuild -exportArchive \
-            -archivePath $CM_BUILD_DIR/AlarmApp.xcarchive \
-            -exportOptionsPlist AlarmApp/ExportOptions.plist \
+            -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
             -exportPath $CM_BUILD_DIR
-
     artifacts:
       - $CM_BUILD_DIR/*.ipa
-      - $CM_BUILD_DIR/AlarmApp.xcarchive
-
+      - $CM_BUILD_DIR/*.dSYM.zip
     publishing:
       app_store_connect:
-        api_key: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        key_content: $APP_STORE_CONNECT_PRIVATE_KEY
-        submit_to_app_store: true
         submit_to_testflight: true
