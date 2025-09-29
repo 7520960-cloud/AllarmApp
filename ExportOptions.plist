@@ -14,7 +14,9 @@
     <key>com.serhiitkachuk.AlarmApp</key>
     <string>alarmapp_appstore_profile</string>
   </dict>
-  <key>compileBitcode</key>
+  <key>uploadSymbols</key>
   <true/>
+  <key>compileBitcode</key>
+  <false/>
 </dict>
 </plist>
