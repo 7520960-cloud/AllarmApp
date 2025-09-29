@@ -1,14 +1,18 @@
 workflows:
   ios-appstore:
     name: iOS App Store Build
-    integrations:
-      app_store_connect: integration
 
     environment:
       vars:
         APP_ID: "com.serhiitkachuk.AlarmApp"
         TEAM_ID: "CW6VS28729"
         PROVISIONING_PROFILE_SPECIFIER: "alarmapp_appstore_profile"
+        APP_STORE_CONNECT_KEY_IDENTIFIER: "8G348K5278" # твой Key ID
+        APP_STORE_CONNECT_ISSUER_ID: "df3224c3-db13-4309-81ef-6d8b4ea05156" # твой Issuer ID
+        APP_STORE_CONNECT_PRIVATE_KEY: |
+          -----BEGIN PRIVATE KEY-----
+          (сюда вставь содержимое файла AuthKey_8G348K5278.p8)
+          -----END PRIVATE KEY-----
 
     scripts:
       - name: Build archive
@@ -36,6 +40,8 @@ workflows:
 
     publishing:
       app_store_connect:
-        auth: integration
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        private_key: $APP_STORE_CONNECT_PRIVATE_KEY
         submit_to_testflight: true
         submit_to_app_store: false
