@@ -2,7 +2,7 @@ workflows:
   ios-appstore:
     name: iOS App Store Build
     integrations:
-      app_store_connect: Coda3   # Имя API ключа, который ты добавил в Codemagic
+      app_store_connect: Coda3  # имя ключа в Codemagic Integrations
 
     environment:
       vars:
@@ -12,20 +12,26 @@ workflows:
         DEV_TEAM: "CW6VS28729"
 
     scripts:
+      # 1) Тянем/создаём профили и ставим сертификаты в кейчейн
+      - name: Fetch signing files
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
+          keychain use-signing-files
+          xcode-project use-profiles
+
+      # 2) Архивируем (используем generic iOS destination, чтобы Xcode не лез на "My Mac")
       - name: Build archive
         script: |
           xcodebuild \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
-            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
             -configuration Release \
-            DEVELOPMENT_TEAM="$DEV_TEAM" \
-            PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
-            CODE_SIGN_STYLE=Automatic \
-            -allowProvisioningUpdates \
             archive \
             -archivePath $CM_BUILD_DIR/ios_app.xcarchive
 
+      # 3) Экспортируем .ipa
       - name: Export .ipa
         script: |
           xcodebuild -exportArchive \
@@ -39,6 +45,6 @@ workflows:
 
     publishing:
       app_store_connect:
-        auth: integration       # Используем интеграцию (ключ Coda3)
+        auth: integration
         submit_to_testflight: true
         submit_to_app_store: false
