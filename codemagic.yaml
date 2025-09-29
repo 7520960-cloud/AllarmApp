@@ -2,15 +2,15 @@ workflows:
   ios-appstore:
     name: iOS App Store Build
     integrations:
-      app_store_connect: Coda3   # ← имя ключа из Codemagic (тот, что 8G348K5278)
+      app_store_connect: Coda3   # Имя API ключа, который ты добавил в Codemagic
+
     environment:
-      groups:
-        - app_store
       vars:
         XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         DEV_TEAM: "CW6VS28729"
+
     scripts:
       - name: Build archive
         script: |
@@ -39,6 +39,6 @@ workflows:
 
     publishing:
       app_store_connect:
-        auth: integration   # ← теперь использует интеграцию из блока integrations
+        auth: integration       # Используем интеграцию (ключ Coda3)
         submit_to_testflight: true
         submit_to_app_store: false
