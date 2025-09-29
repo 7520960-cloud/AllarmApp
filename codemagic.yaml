@@ -2,12 +2,14 @@ workflows:
   ios-appstore:
     name: iOS App Store Build
     integrations:
-      app_store_connect: Coda3   # замени на точное имя интеграции в Codemagic
+      app_store_connect: integration
+
     environment:
       vars:
         APP_ID: "com.serhiitkachuk.AlarmApp"
         TEAM_ID: "CW6VS28729"
         PROVISIONING_PROFILE_SPECIFIER: "alarmapp_appstore_profile"
+
     scripts:
       - name: Build archive
         script: |
@@ -20,17 +22,20 @@ workflows:
             PROVISIONING_PROFILE_SPECIFIER=$PROVISIONING_PROFILE_SPECIFIER \
             CODE_SIGN_STYLE=Manual \
             archive
+
       - name: Export .ipa
         script: |
           xcodebuild -exportArchive \
             -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
             -exportOptionsPlist exportOptions.plist \
             -exportPath $CM_BUILD_DIR
+
     artifacts:
       - $CM_BUILD_DIR/*.ipa
       - $CM_BUILD_DIR/ios_app.xcarchive
+
     publishing:
       app_store_connect:
-        auth: Coda3   # имя интеграции из Codemagic
+        auth: integration
         submit_to_testflight: true
         submit_to_app_store: false
