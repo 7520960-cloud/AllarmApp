@@ -2,8 +2,6 @@ workflows:
   ios-appstore:
     name: iOS App Store Build
     environment:
-      groups:
-        - app_store
       vars:
         XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
@@ -38,9 +36,6 @@ workflows:
 
     publishing:
       app_store_connect:
-        auth: api_key
-        key_id: $APP_STORE_CONNECT_KEY_ID
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        auth: integration
         submit_to_testflight: true
         submit_to_app_store: false
