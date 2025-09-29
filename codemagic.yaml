@@ -9,7 +9,6 @@ workflows:
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         DEV_TEAM: "CW6VS28729"
-
     scripts:
       - name: Build archive
         script: |
