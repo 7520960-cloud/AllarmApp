@@ -9,6 +9,7 @@ workflows:
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         DEV_TEAM: "CW6VS28729"
+
     scripts:
       - name: Build archive
         script: |
@@ -37,8 +38,8 @@ workflows:
 
     publishing:
       app_store_connect:
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        private_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDE
+        issuer_id: $APP_STORE_CONNECT_ISSUER
+        private_key: $APP_STORE_CONNECT_PRIVATE
         submit_to_testflight: true
         submit_to_app_store: false
