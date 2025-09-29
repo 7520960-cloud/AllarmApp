@@ -1,9 +1,11 @@
 workflows:
   ios-appstore:
     name: iOS App Store Build
+    integrations:
+      app_store_connect: integration
     environment:
       vars:
-        XCODE_WORKSPACE: "AlarmApp.xcodeproj"
+        XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         DEVELOPMENT_TEAM: "CW6VS28729"
@@ -12,15 +14,10 @@ workflows:
         distribution_type: app_store
         bundle_identifier: "com.serhiitkachuk.AlarmApp"
     scripts:
-      - name: Install dependencies
-        script: |
-          brew install cocoapods || true
-          pod install || true
-
       - name: Build archive
         script: |
           xcodebuild archive \
-            -project "$XCODE_WORKSPACE" \
+            -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
             -configuration Release \
             -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
@@ -43,6 +40,5 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        integration: appstore_integration   # имя интеграции в Codemagic
         submit_to_testflight: true
         submit_to_app_store: false
