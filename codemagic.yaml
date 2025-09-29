@@ -1,26 +1,16 @@
 workflows:
   ios-appstore:
     name: iOS App Store Build
-    integrations:
-      app_store_connect: Coda3   # имя твоего API ключа в Codemagic
-
     environment:
+      groups:
+        - app_store
       vars:
         XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         DEV_TEAM: "CW6VS28729"
-
+        PROVISIONING_PROFILE_SPECIFIER: "alarmapp_appstore_profile"
     scripts:
-      # 1) Подтягиваем сертификаты и provisioning profiles из Apple Developer
-      - name: Fetch signing files
-        script: |
-          keychain initialize
-          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
-          keychain use-signing-files
-          xcode-project use-profiles
-
-      # 2) Архивируем iOS приложение (автоподпись)
       - name: Build archive
         script: |
           xcodebuild \
@@ -28,14 +18,13 @@ workflows:
             -scheme "$XCODE_SCHEME" \
             -sdk iphoneos \
             -configuration Release \
-            archive \
-            -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
             DEVELOPMENT_TEAM="$DEV_TEAM" \
             PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
-            CODE_SIGN_STYLE=Automatic \
-            -allowProvisioningUpdates
+            PROVISIONING_PROFILE_SPECIFIER="$PROVISIONING_PROFILE_SPECIFIER" \
+            CODE_SIGN_STYLE=Manual \
+            archive \
+            -archivePath $CM_BUILD_DIR/ios_app.xcarchive
 
-      # 3) Экспортируем IPA
       - name: Export .ipa
         script: |
           xcodebuild -exportArchive \
