@@ -1,47 +1,35 @@
 workflows:
   ios-appstore:
     name: iOS App Store Build
-
     environment:
       vars:
-        APP_ID: "com.serhiitkachuk.AlarmApp"
-        TEAM_ID: "CW6VS28729"
+        XCODE_WORKSPACE: "AlarmApp.xcodeproj"
+        XCODE_SCHEME: "AlarmApp"
+        BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
+        DEVELOPMENT_TEAM: "CW6VS28729"
         PROVISIONING_PROFILE_SPECIFIER: "alarmapp_appstore_profile"
-        APP_STORE_CONNECT_KEY_IDENTIFIER: "8G348K5278" # твой Key ID
-        APP_STORE_CONNECT_ISSUER_ID: "df3224c3-db13-4309-81ef-6d8b4ea05156" # твой Issuer ID
-        APP_STORE_CONNECT_PRIVATE_KEY: |
-          -----BEGIN PRIVATE KEY-----
-          (сюда вставь содержимое файла AuthKey_8G348K5278.p8)
-          -----END PRIVATE KEY-----
-
+      xcode: 16.4
+      cocoapods: default
     scripts:
+      - name: Install dependencies
+        script: |
+          gem install cocoapods --no-document
+          pod install
       - name: Build archive
         script: |
-          xcodebuild -project AlarmApp.xcodeproj \
-            -scheme AlarmApp \
+          xcodebuild -project "$XCODE_WORKSPACE" \
+            -scheme "$XCODE_SCHEME" \
             -configuration Release \
             -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
-            DEVELOPMENT_TEAM=$TEAM_ID \
-            PRODUCT_BUNDLE_IDENTIFIER=$APP_ID \
-            PROVISIONING_PROFILE_SPECIFIER=$PROVISIONING_PROFILE_SPECIFIER \
-            CODE_SIGN_STYLE=Manual \
-            archive
-
-      - name: Export .ipa
-        script: |
-          xcodebuild -exportArchive \
-            -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
-            -exportOptionsPlist exportOptions.plist \
-            -exportPath $CM_BUILD_DIR
-
+            DEVELOPMENT_TEAM="$DEVELOPMENT_TEAM" \
+            PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
+            PROVISIONING_PROFILE_SPECIFIER="$PROVISIONING_PROFILE_SPECIFIER" \
+            clean archive | xcpretty
     artifacts:
-      - $CM_BUILD_DIR/*.ipa
+      - build/ios/ipa/*.ipa
       - $CM_BUILD_DIR/ios_app.xcarchive
-
     publishing:
       app_store_connect:
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        private_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        auth: integration
         submit_to_testflight: true
         submit_to_app_store: false
