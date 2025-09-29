@@ -94,6 +94,7 @@
         INFOPLIST_FILE = AlarmApp/Info.plist;
         IPHONEOS_DEPLOYMENT_TARGET = 15.0;
         SWIFT_VERSION = 5.0;
+        SDKROOT = iphoneos;
       };
       name = Debug;
     };
@@ -104,6 +105,7 @@
         INFOPLIST_FILE = AlarmApp/Info.plist;
         IPHONEOS_DEPLOYMENT_TARGET = 15.0;
         SWIFT_VERSION = 5.0;
+        SDKROOT = iphoneos;
       };
       name = Release;
     };
