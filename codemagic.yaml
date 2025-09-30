@@ -2,10 +2,18 @@ workflows:
   ios-appstore:
     name: iOS App Store Build
     max_build_duration: 120
+
+    # ← ключевой блок: указываем интеграцию по имени,
+    # чтобы publishing с auth: integration валидировался
+    integrations:
+      app_store_connect: Coda3
+
     environment:
+      # ← выбираем один способ конфигурации подписей:
+      # через distribution_type + bundle_identifier (без профилей!)
       ios_signing:
-        provisioning_profiles:
-          - alarmapp_appstore_profile
+        distribution_type: app_store
+        bundle_identifier: com.serhiitkachuk.AlarmApp
       vars:
         XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
@@ -40,6 +48,6 @@ workflows:
 
     publishing:
       app_store_connect:
-        integration: Coda3
+        auth: integration
         submit_to_testflight: true
         submit_to_app_store: false
