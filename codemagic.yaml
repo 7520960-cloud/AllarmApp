@@ -1,36 +1,42 @@
 workflows:
   ios-appstore:
     name: iOS App Store Build
-
     integrations:
-      app_store_connect: Coda3   # интеграция из Codemagic UI
+      app_store_connect: integration
 
     environment:
+      groups:
+        - app_store
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.serhiitkachuk.AlarmApp
+        bundle_identifier: "com.serhiitkachuk.AlarmApp"
+      vars:
+        XCODE_PROJECT: "AlarmApp.xcodeproj"
+        XCODE_SCHEME: "AlarmApp"
+        BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
+        DEV_TEAM: "CW6VS28729"
 
     scripts:
       - name: Build archive
         script: |
           xcodebuild \
-            -project AlarmApp.xcodeproj \
-            -scheme AlarmApp \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -sdk iphoneos \
             -configuration Release \
-            -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
-            DEVELOPMENT_TEAM=CW6VS28729 \
-            PRODUCT_BUNDLE_IDENTIFIER=com.serhiitkachuk.AlarmApp \
+            DEVELOPMENT_TEAM="$DEV_TEAM" \
+            PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
             CODE_SIGN_STYLE=Automatic \
             -allowProvisioningUpdates \
-            archive
+            archive \
+            -archivePath $CM_BUILD_DIR/ios_app.xcarchive
 
       - name: Export .ipa
         script: |
           xcodebuild -exportArchive \
             -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
             -exportOptionsPlist exportOptions.plist \
-            -exportPath $CM_BUILD_DIR \
-            -allowProvisioningUpdates
+            -exportPath $CM_BUILD_DIR
 
     artifacts:
       - $CM_BUILD_DIR/*.ipa
@@ -38,6 +44,6 @@ workflows:
 
     publishing:
       app_store_connect:
-        auth: integration   # используем подключение Coda3
+        auth: integration
         submit_to_testflight: true
         submit_to_app_store: false
