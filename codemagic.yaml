@@ -3,7 +3,7 @@ workflows:
     name: iOS App Store Build
     max_build_duration: 120
     integrations:
-      app_store_connect: Coda3   # имя интеграции из Codemagic UI
+      app_store_connect: integration
     environment:
       ios_signing:
         provisioning_profiles:
