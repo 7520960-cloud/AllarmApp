@@ -2,39 +2,49 @@ workflows:
   ios-appstore:
     name: iOS App Store Build
     max_build_duration: 120
+
     integrations:
       app_store_connect: Coda3   # имя интеграции в Codemagic
+
     environment:
+      ios_signing:
+        provisioning_profiles:
+          - alarmapp_appstore_profile
       vars:
         XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         TEAM_ID: "CW6VS28729"
+
     scripts:
-      - name: Build archive
+      - name: Install dependencies
+        script: |
+          if [ -f "Podfile" ]; then
+            gem install cocoapods --no-document
+            pod install
+          else
+            echo "No Podfile found, skipping CocoaPods installation"
+          fi
+
+      - name: Build IPA
         script: |
           xcodebuild \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
             -sdk iphoneos \
             -configuration Release \
-            CODE_SIGN_STYLE=Automatic \
-            DEVELOPMENT_TEAM="$TEAM_ID" \
-            PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
             -allowProvisioningUpdates \
-            archive -archivePath $CM_BUILD_DIR/ios_app.xcarchive
+            archive -archivePath $CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive
 
-      - name: Export IPA
-        script: |
-          xcodebuild -exportArchive \
-            -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
+          xcodebuild \
+            -exportArchive \
+            -archivePath $CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive \
             -exportOptionsPlist ExportOptions.plist \
-            -exportPath $CM_BUILD_DIR
+            -exportPath $CM_BUILD_DIR/ios/ipa
+
     artifacts:
-      - $CM_BUILD_DIR/*.ipa
-      - $CM_BUILD_DIR/ios_app.xcarchive
+      - ios/ipa/*.ipa
+      - ios/archive/*.xcarchive
+
     publishing:
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: true
-        submit_to_app_store: false
+      app_store_connect: true
