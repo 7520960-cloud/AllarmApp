@@ -2,52 +2,35 @@ workflows:
   ios-appstore:
     name: iOS App Store Build
     max_build_duration: 120
-
     integrations:
       app_store_connect: integration
-
     environment:
       ios_signing:
-        provisioning_profiles:
-          - alarmapp_appstore_profile
+        distribution_type: app_store
+        bundle_identifier: "com.serhiitkachuk.AlarmApp"
       vars:
         XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
-        BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         TEAM_ID: "CW6VS28729"
-        PROFILE_NAME: "alarmapp_appstore_profile"
-
     scripts:
-      - name: Install dependencies
+      - name: Build IPA
         script: |
-          gem install cocoapods --no-document || true
-          [ -f "Podfile" ] && pod install || echo "No Podfile found, skipping"
-
-      - name: Build archive
-        script: |
-          set -e
           xcodebuild \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
-            -configuration Release \
             -sdk iphoneos \
-            CODE_SIGN_STYLE=Manual \
-            DEVELOPMENT_TEAM="$TEAM_ID" \
-            PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
-            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_NAME" \
-            archive -archivePath "$CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive"
+            -configuration Release \
+            -allowProvisioningUpdates \
+            archive -archivePath $CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive
 
-      - name: Export IPA
-        script: |
-          set -e
-          xcodebuild -exportArchive \
-            -archivePath "$CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive" \
+          xcodebuild \
+            -exportArchive \
+            -archivePath $CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive \
             -exportOptionsPlist ExportOptions.plist \
-            -exportPath "$CM_BUILD_DIR/ios/ipa"
-
+            -exportPath $CM_BUILD_DIR/ios/ipa
     artifacts:
       - ios/ipa/*.ipa
       - ios/archive/*.xcarchive
-
     publishing:
-      app_store_connect: integration
+      app_store_connect:
+        auth: integration
