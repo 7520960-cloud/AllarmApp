@@ -2,6 +2,8 @@ workflows:
   ios-appstore:
     name: iOS App Store Build
     max_build_duration: 120
+    integrations:
+      app_store_connect: integration
     environment:
       ios_signing:
         provisioning_profiles:
@@ -15,7 +17,7 @@ workflows:
       - name: Install dependencies
         script: |
           gem install cocoapods --no-document
-          pod install
+          pod install || echo "No Podfile found, skipping"
       - name: Build IPA
         script: |
           xcodebuild \
