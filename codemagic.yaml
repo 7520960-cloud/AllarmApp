@@ -4,18 +4,23 @@ workflows:
     max_build_duration: 120
     environment:
       ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.serhiitkachuk.AlarmApp
+        provisioning_profiles:
+          - alarmapp_appstore_profile
       vars:
-        XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         TEAM_ID: "CW6VS28729"
     scripts:
+      - name: Install dependencies
+        script: |
+          if [ -f "Podfile" ]; then
+            gem install cocoapods --no-document
+            pod install
+          fi
       - name: Build IPA
         script: |
           xcodebuild \
-            -project "$XCODE_PROJECT" \
+            -project AlarmApp.xcodeproj \
             -scheme "$XCODE_SCHEME" \
             -sdk iphoneos \
             -configuration Release \
