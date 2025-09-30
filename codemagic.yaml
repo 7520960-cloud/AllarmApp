@@ -2,22 +2,30 @@ workflows:
   ios-appstore:
     name: iOS App Store Build
     max_build_duration: 120
+    integrations:
+      app_store_connect: integration
     environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.serhiitkachuk.AlarmApp
       vars:
+        XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
-        BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         TEAM_ID: "CW6VS28729"
+        BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
     scripts:
       - name: Build IPA
         script: |
+          set -e
           xcodebuild \
-            -project AlarmApp.xcodeproj \
+            -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
             -sdk iphoneos \
             -configuration Release \
             -allowProvisioningUpdates \
             DEVELOPMENT_TEAM=$TEAM_ID \
             PRODUCT_BUNDLE_IDENTIFIER=$BUNDLE_ID \
+            CODE_SIGN_STYLE=Automatic \
             archive -archivePath $CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive
 
           xcodebuild \
@@ -29,4 +37,5 @@ workflows:
       - ios/ipa/*.ipa
       - ios/archive/*.xcarchive
     publishing:
-      app_store_connect: integration
+      app_store_connect:
+        auth: integration
