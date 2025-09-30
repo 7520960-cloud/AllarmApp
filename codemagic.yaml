@@ -2,26 +2,19 @@ workflows:
   ios-appstore:
     name: iOS App Store Build
     max_build_duration: 120
-    integrations:
-      app_store_connect: integration
     environment:
       ios_signing:
         provisioning_profiles:
           - alarmapp_appstore_profile
       vars:
-        XCODE_WORKSPACE: "AlarmApp.xcworkspace"
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         TEAM_ID: "CW6VS28729"
     scripts:
-      - name: Install dependencies
-        script: |
-          gem install cocoapods --no-document
-          pod install || echo "No Podfile found, skipping"
       - name: Build IPA
         script: |
           xcodebuild \
-            -workspace "$XCODE_WORKSPACE" \
+            -project "AlarmApp.xcodeproj" \
             -scheme "$XCODE_SCHEME" \
             -sdk iphoneos \
             -configuration Release \
@@ -37,5 +30,4 @@ workflows:
       - ios/ipa/*.ipa
       - ios/archive/*.xcarchive
     publishing:
-      app_store_connect:
-        auth: integration
+      app_store_connect: integration
