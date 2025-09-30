@@ -21,6 +21,7 @@ workflows:
             -sdk iphoneos \
             -configuration Release \
             -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM=$TEAM_ID \
             archive -archivePath $CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive
 
           xcodebuild \
