@@ -3,25 +3,23 @@ workflows:
     name: iOS App Store Build
     max_build_duration: 120
     environment:
-      ios_signing:
-        provisioning_profiles:
-          - alarmapp_appstore_profile
       vars:
-        XCODE_WORKSPACE: "AlarmApp.xcworkspace"
+        XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         TEAM_ID: "CW6VS28729"
-    integrations:
-      app_store_connect: Coda3
     scripts:
       - name: Build IPA
         script: |
           xcodebuild \
-            -workspace "$XCODE_WORKSPACE" \
+            -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
             -sdk iphoneos \
             -configuration Release \
             -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
+            CODE_SIGN_STYLE=Automatic \
             archive -archivePath $CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive
 
           xcodebuild \
@@ -34,4 +32,4 @@ workflows:
       - ios/archive/*.xcarchive
     publishing:
       app_store_connect:
-        auth: integration
+        integration: Coda3   # имя интеграции App Store Connect в Codemagic
