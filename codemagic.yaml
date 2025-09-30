@@ -5,23 +5,32 @@ workflows:
     integrations:
       app_store_connect: integration
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: "com.serhiitkachuk.AlarmApp"
       vars:
         XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         TEAM_ID: "CW6VS28729"
     scripts:
+      - name: Set up signing
+        script: |
+          set -e
+          keychain initialize
+          app-store-connect fetch-signing-files \
+            --type IOS_APP_STORE \
+            "$BUNDLE_ID"
+          keychain add-certificates
+          xcode-project use-profiles
       - name: Build IPA
         script: |
+          set -e
           xcodebuild \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
             -sdk iphoneos \
             -configuration Release \
-            -allowProvisioningUpdates \
+            -destination 'generic/platform=iOS' \
+            DEVELOPMENT_TEAM=$TEAM_ID \
+            PRODUCT_BUNDLE_IDENTIFIER=$BUNDLE_ID \
             archive -archivePath $CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive
 
           xcodebuild \
