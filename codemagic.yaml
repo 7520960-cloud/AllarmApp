@@ -35,4 +35,5 @@ workflows:
       - ios/ipa/*.ipa
       - ios/archive/*.xcarchive
     publishing:
-      app_store_connect: integration
+      app_store_connect:
+        auth: integration
