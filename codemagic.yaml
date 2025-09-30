@@ -37,4 +37,5 @@ workflows:
       - ios/ipa/*.ipa
       - ios/archive/*.xcarchive
     publishing:
-      app_store_connect: Coda3   # имя интеграции в Codemagic
+      app_store_connect:
+        integration: Coda3   # имя твоей интеграции
