@@ -4,11 +4,18 @@
 <dict>
   <key>method</key>
   <string>app-store</string>
+
   <key>signingStyle</key>
   <string>automatic</string>
+
   <key>uploadSymbols</key>
   <true/>
+
   <key>compileBitcode</key>
   <false/>
+
+  <!-- Опционально, но полезно для связки с твоей командой -->
+  <key>teamID</key>
+  <string>CW6VS28729</string>
 </dict>
 </plist>
