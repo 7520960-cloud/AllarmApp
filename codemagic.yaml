@@ -8,6 +8,8 @@ workflows:
 
     environment:
       ios_signing:
+        certificates:
+          - SSS
         provisioning_profiles:
           - alarmapp_appstore_profile
       vars:
@@ -35,9 +37,6 @@ workflows:
       - name: Export IPA
         script: |
           set -e
-          /usr/libexec/PlistBuddy -c "Delete :provisioningProfiles:$BUNDLE_ID" ExportOptions.plist >/dev/null 2>&1 || true
-          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" ExportOptions.plist >/dev/null 2>&1 || true
-          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:$BUNDLE_ID string $PROFILE_NAME" ExportOptions.plist
           xcodebuild -exportArchive \
             -archivePath "$CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive" \
             -exportOptionsPlist ExportOptions.plist \
@@ -48,4 +47,5 @@ workflows:
       - ios/archive/*.xcarchive
 
     publishing:
-      app_store_connect: integration
+      app_store_connect:
+        integration: integration
