@@ -1,12 +1,39 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>method</key>
-  <string>app-store</string>
-  <key>uploadSymbols</key>
-  <true/>
-  <key>compileBitcode</key>
-  <false/>
-</dict>
-</plist>
+workflows:
+  ios-appstore:
+    name: iOS App Store Build & TestFlight
+    max_build_duration: 60
+    environment:
+      vars:
+        XCODE_WORKSPACE: "AlarmApp.xcodeproj"
+        XCODE_SCHEME: "AlarmApp"
+      xcode: 16.4
+      ios_signing:
+        provisioning_profiles:
+          - alarmapp_appstore_profile
+        certificates:
+          - SSS
+    scripts:
+      - name: Install dependencies
+        script: |
+          gem install cocoapods --no-document
+          pod install --repo-update || pod install
+      - name: Build archive
+        script: |
+          xcodebuild \
+            -project "$XCODE_WORKSPACE" \
+            -scheme "$XCODE_SCHEME" \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
+            CODE_SIGN_STYLE=Automatic \
+            DEVELOPMENT_TEAM=CW6VS28729 \
+            PRODUCT_BUNDLE_IDENTIFIER=com.serhiitkachuk.AlarmApp \
+            clean archive
+    artifacts:
+      - $CM_BUILD_DIR/ios_app.xcarchive
+      - $CM_BUILD_DIR/ios_app.xcarchive/dSYMs
+    publishing:
+      app_store_connect:
+        integration: Coda3
+        submit_to_testflight: true
+        submit_to_app_store: false
