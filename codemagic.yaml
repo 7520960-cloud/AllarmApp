@@ -1,39 +1,44 @@
 workflows:
   ios-appstore:
-    name: iOS App Store Build & TestFlight
-    max_build_duration: 60
+    name: iOS App Store Build
+    integrations:
+      app_store_connect: Coda3
+
     environment:
       vars:
-        XCODE_WORKSPACE: "AlarmApp.xcodeproj"
+        XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
-      xcode: 16.4
-      ios_signing:
-        provisioning_profiles:
-          - alarmapp_appstore_profile
-        certificates:
-          - SSS
+        BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
+        DEV_TEAM: "CW6VS28729"
+
     scripts:
-      - name: Install dependencies
-        script: |
-          gem install cocoapods --no-document
-          pod install --repo-update || pod install
       - name: Build archive
         script: |
           xcodebuild \
-            -project "$XCODE_WORKSPACE" \
+            -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
-            -configuration Release \
             -sdk iphoneos \
-            -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
+            -configuration Release \
+            DEVELOPMENT_TEAM="$DEV_TEAM" \
+            PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
             CODE_SIGN_STYLE=Automatic \
-            DEVELOPMENT_TEAM=CW6VS28729 \
-            PRODUCT_BUNDLE_IDENTIFIER=com.serhiitkachuk.AlarmApp \
-            clean archive
+            -allowProvisioningUpdates \
+            archive \
+            -archivePath $CM_BUILD_DIR/ios_app.xcarchive
+
+      - name: Export .ipa
+        script: |
+          xcodebuild -exportArchive \
+            -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
+            -exportOptionsPlist exportOptions.plist \
+            -exportPath $CM_BUILD_DIR
+
     artifacts:
+      - $CM_BUILD_DIR/*.ipa
       - $CM_BUILD_DIR/ios_app.xcarchive
-      - $CM_BUILD_DIR/ios_app.xcarchive/dSYMs
+
     publishing:
       app_store_connect:
-        integration: Coda3
+        auth: integration
         submit_to_testflight: true
         submit_to_app_store: false
