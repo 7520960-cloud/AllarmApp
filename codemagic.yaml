@@ -11,6 +11,8 @@ workflows:
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         TEAM_ID: "CW6VS28729"
+    integrations:
+      app_store_connect: Coda3
     scripts:
       - name: Install dependencies
         script: |
@@ -36,4 +38,4 @@ workflows:
       - ios/archive/*.xcarchive
     publishing:
       app_store_connect:
-        integration: "Coda3"
+        auth: integration
