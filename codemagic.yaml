@@ -11,27 +11,35 @@ workflows:
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         TEAM_ID: "CW6VS28729"
+
     scripts:
-      - name: Build IPA
+      - name: Build archive
         script: |
           xcodebuild \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
             -sdk iphoneos \
             -configuration Release \
+            DEVELOPMENT_TEAM="$TEAM_ID" \
+            PRODUCT_BUNDLE_IDENTIFIER="$BUNDLE_ID" \
+            CODE_SIGN_STYLE=Automatic \
             -allowProvisioningUpdates \
-            archive -archivePath $CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive
+            archive \
+            -archivePath $CM_BUILD_DIR/ios_app.xcarchive
 
-          xcodebuild \
-            -exportArchive \
-            -archivePath $CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive \
+      - name: Export .ipa
+        script: |
+          xcodebuild -exportArchive \
+            -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
             -exportOptionsPlist ExportOptions.plist \
-            -exportPath $CM_BUILD_DIR/ios/ipa
+            -exportPath $CM_BUILD_DIR
+
     artifacts:
-      - ios/ipa/*.ipa
-      - ios/archive/*.xcarchive
+      - $CM_BUILD_DIR/*.ipa
+      - $CM_BUILD_DIR/ios_app.xcarchive
+
     publishing:
       app_store_connect:
-        auth: integration
+        integration: Coda3
         submit_to_testflight: true
         submit_to_app_store: false
