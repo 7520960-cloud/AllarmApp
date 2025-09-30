@@ -8,8 +8,6 @@ workflows:
 
     environment:
       ios_signing:
-        certificates:
-          - SSS
         provisioning_profiles:
           - alarmapp_appstore_profile
       vars:
@@ -20,6 +18,11 @@ workflows:
         PROFILE_NAME: "alarmapp_appstore_profile"
 
     scripts:
+      - name: Install dependencies
+        script: |
+          gem install cocoapods --no-document || true
+          [ -f "Podfile" ] && pod install || echo "No Podfile found, skipping"
+
       - name: Build archive
         script: |
           set -e
@@ -47,5 +50,4 @@ workflows:
       - ios/archive/*.xcarchive
 
     publishing:
-      app_store_connect:
-        integration: integration
+      app_store_connect: integration
