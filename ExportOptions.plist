@@ -1,39 +1,40 @@
-workflows:
-  ios-appstore:
-    name: iOS App Store Build & TestFlight
-    max_build_duration: 60
-    environment:
-      vars:
-        XCODE_WORKSPACE: "AlarmApp.xcodeproj"
-        XCODE_SCHEME: "AlarmApp"
-      xcode: 16.4
-      ios_signing:
-        provisioning_profiles:
-          - alarmapp_appstore_profile
-        certificates:
-          - SSS
-    scripts:
-      - name: Install dependencies
-        script: |
-          gem install cocoapods --no-document
-          pod install --repo-update || pod install
-      - name: Build archive
-        script: |
-          xcodebuild \
-            -project "$XCODE_WORKSPACE" \
-            -scheme "$XCODE_SCHEME" \
-            -configuration Release \
-            -sdk iphoneos \
-            -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
-            CODE_SIGN_STYLE=Automatic \
-            DEVELOPMENT_TEAM=CW6VS28729 \
-            PRODUCT_BUNDLE_IDENTIFIER=com.serhiitkachuk.AlarmApp \
-            clean archive
-    artifacts:
-      - $CM_BUILD_DIR/ios_app.xcarchive
-      - $CM_BUILD_DIR/ios_app.xcarchive/dSYMs
-    publishing:
-      app_store_connect:
-        integration: Coda3
-        submit_to_testflight: true
-        submit_to_app_store: false
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Тип экспорта: для публикации в App Store / TestFlight -->
+    <key>method</key>
+    <string>app-store</string>
+
+    <!-- Team ID -->
+    <key>teamID</key>
+    <string>CW6VS28729</string>
+
+    <!-- Включаем управление профилями автоматически -->
+    <key>signingStyle</key>
+    <string>automatic</string>
+
+    <!-- Указываем provisioning profile -->
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>com.serhiitkachuk.AlarmApp</key>
+        <string>alarmapp_appstore_profile</string>
+    </dict>
+
+    <!-- Указываем bundle identifier -->
+    <key>bundleIdentifier</key>
+    <string>com.serhiitkachuk.AlarmApp</string>
+
+    <!-- Upload symbols для dSYM -->
+    <key>uploadSymbols</key>
+    <true/>
+
+    <!-- Manage app thinning -->
+    <key>stripSwiftSymbols</key>
+    <true/>
+
+    <!-- Manage bitcode -->
+    <key>compileBitcode</key>
+    <false/>
+</dict>
+</plist>
