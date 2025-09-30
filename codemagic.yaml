@@ -21,6 +21,7 @@ workflows:
             DEVELOPMENT_TEAM=CW6VS28729 \
             PRODUCT_BUNDLE_IDENTIFIER=com.serhiitkachuk.AlarmApp \
             CODE_SIGN_STYLE=Automatic \
+            -allowProvisioningUpdates \
             archive
 
       - name: Export .ipa
@@ -28,7 +29,8 @@ workflows:
           xcodebuild -exportArchive \
             -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
             -exportOptionsPlist exportOptions.plist \
-            -exportPath $CM_BUILD_DIR
+            -exportPath $CM_BUILD_DIR \
+            -allowProvisioningUpdates
 
     artifacts:
       - $CM_BUILD_DIR/*.ipa
@@ -36,6 +38,6 @@ workflows:
 
     publishing:
       app_store_connect:
-        auth: integration   # используем интеграцию Coda3
+        auth: integration   # используем подключение Coda3
         submit_to_testflight: true
         submit_to_app_store: false
