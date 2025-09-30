@@ -6,18 +6,16 @@
     <string>app-store</string>
     <key>teamID</key>
     <string>CW6VS28729</string>
-    <key>signingStyle</key>
-    <string>automatic</string>
-    <key>bundleIdentifier</key>
-    <string>com.serhiitkachuk.AlarmApp</string>
     <key>provisioningProfiles</key>
     <dict>
         <key>com.serhiitkachuk.AlarmApp</key>
         <string>alarmapp_appstore_profile</string>
     </dict>
-    <key>uploadSymbols</key>
-    <true/>
+    <key>signingStyle</key>
+    <string>manual</string>
     <key>compileBitcode</key>
+    <false/>
+    <key>stripSwiftSymbols</key>
     <true/>
 </dict>
 </plist>
