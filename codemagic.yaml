@@ -10,9 +10,6 @@ workflows:
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         DEV_TEAM: "CW6VS28729"
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: "com.serhiitkachuk.AlarmApp"
 
     scripts:
       - name: Build archive
@@ -43,6 +40,5 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
-        integration: Coda3
         submit_to_testflight: true
         submit_to_app_store: false
