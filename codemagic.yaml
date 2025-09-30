@@ -7,8 +7,8 @@ workflows:
 
     environment:
       ios_signing:
-        provisioning_profiles:
-          - alarmapp_appstore_profile   # твой профиль, загруженный в Codemagic
+        distribution_type: app_store
+        bundle_identifier: com.serhiitkachuk.AlarmApp
 
     scripts:
       - name: Build archive
@@ -20,7 +20,7 @@ workflows:
             -archivePath $CM_BUILD_DIR/ios_app.xcarchive \
             DEVELOPMENT_TEAM=CW6VS28729 \
             PRODUCT_BUNDLE_IDENTIFIER=com.serhiitkachuk.AlarmApp \
-            PROVISIONING_PROFILE_SPECIFIER=alarmapp_appstore_profile \
+            CODE_SIGN_STYLE=Automatic \
             archive
 
       - name: Export .ipa
