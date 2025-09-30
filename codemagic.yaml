@@ -36,4 +36,4 @@ workflows:
       - ios/archive/*.xcarchive
     publishing:
       app_store_connect:
-        integration: Coda3   # имя твоей интеграции
+        integration: "Coda3"
