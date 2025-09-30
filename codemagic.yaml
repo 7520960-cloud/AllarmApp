@@ -2,15 +2,21 @@ workflows:
   ios-appstore:
     name: iOS App Store Build
     max_build_duration: 120
+    integrations:
+      app_store_connect: Coda3   # имя интеграции из Codemagic UI
     environment:
       ios_signing:
-        distribution_type: app_store
-        bundle_identifier: "com.serhiitkachuk.AlarmApp"
+        provisioning_profiles:
+          - alarmapp_appstore_profile
       vars:
         XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
+        BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         TEAM_ID: "CW6VS28729"
     scripts:
+      - name: Install dependencies
+        script: |
+          echo "No Podfile found, skipping CocoaPods installation"
       - name: Build IPA
         script: |
           xcodebuild \
@@ -32,3 +38,5 @@ workflows:
     publishing:
       app_store_connect:
         auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false
