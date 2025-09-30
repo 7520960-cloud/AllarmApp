@@ -14,10 +14,6 @@ workflows:
     integrations:
       app_store_connect: Coda3
     scripts:
-      - name: Install dependencies
-        script: |
-          gem install cocoapods --no-document
-          pod install
       - name: Build IPA
         script: |
           xcodebuild \
