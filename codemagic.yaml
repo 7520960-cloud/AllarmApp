@@ -4,9 +4,10 @@ workflows:
     max_build_duration: 120
     environment:
       ios_signing:
-        provisioning_profiles:
-          - alarmapp_appstore_profile
+        distribution_type: app_store
+        bundle_identifier: com.serhiitkachuk.AlarmApp
       vars:
+        XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
         BUNDLE_ID: "com.serhiitkachuk.AlarmApp"
         TEAM_ID: "CW6VS28729"
@@ -14,7 +15,7 @@ workflows:
       - name: Build IPA
         script: |
           xcodebuild \
-            -project "AlarmApp.xcodeproj" \
+            -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
             -sdk iphoneos \
             -configuration Release \
@@ -30,4 +31,5 @@ workflows:
       - ios/ipa/*.ipa
       - ios/archive/*.xcarchive
     publishing:
-      app_store_connect: integration
+      app_store_connect:
+        auth: integration
