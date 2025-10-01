@@ -8,10 +8,10 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: "com.serhiitkachuk.AlarmApp"
+        team_id: "CW6VS28729"
       vars:
         XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
-        TEAM_ID: "CW6VS28729"
     scripts:
       - name: Build IPA
         script: |
@@ -21,7 +21,6 @@ workflows:
             -sdk iphoneos \
             -configuration Release \
             -allowProvisioningUpdates \
-            DEVELOPMENT_TEAM=$TEAM_ID \
             archive -archivePath $CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive
 
           xcodebuild \
