@@ -11,6 +11,7 @@ workflows:
       vars:
         XCODE_PROJECT: "AlarmApp.xcodeproj"
         XCODE_SCHEME: "AlarmApp"
+        DEVELOPMENT_TEAM: "CW6VS28729"
     scripts:
       - name: Build IPA
         script: |
@@ -20,6 +21,7 @@ workflows:
             -sdk iphoneos \
             -configuration Release \
             -allowProvisioningUpdates \
+            DEVELOPMENT_TEAM=$DEVELOPMENT_TEAM \
             archive -archivePath $CM_BUILD_DIR/ios/archive/AlarmApp.xcarchive
 
           xcodebuild \
